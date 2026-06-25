@@ -7,7 +7,8 @@ const ItineraryCard = ({
   location, 
   image, 
   status, 
-  actionText 
+  actionText,
+  onShare
 }) => {
   const isUpcoming = status?.toLowerCase() === 'upcoming'
   
@@ -35,7 +36,10 @@ const ItineraryCard = ({
       <div className="p-6 flex-1 flex flex-col">
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-headline-md text-xl text-on-surface">{title}</h3>
-          <button className="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-variant/20">
+          <button 
+            onClick={() => onShare?.({ title, location })}
+            className="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-variant/20 border-none outline-none"
+          >
             share
           </button>
         </div>

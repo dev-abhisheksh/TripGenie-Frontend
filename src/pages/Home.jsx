@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import ItineraryCard from '../components/dashboard/ItineraryCard'
+import ShareModal from '../components/dashboard/ShareModal'
 
 const Home = () => {
   const [isDragging, setIsDragging] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState([])
+  const [activeShareTrip, setActiveShareTrip] = useState(null)
   const fileInputRef = useRef(null)
   const location = useLocation()
 
@@ -153,10 +155,18 @@ const Home = () => {
               image={itinerary.image}
               status={itinerary.status}
               actionText={itinerary.actionText}
+              onShare={setActiveShareTrip}
             />
           ))}
         </div>
       </section>
+
+      {activeShareTrip && (
+        <ShareModal 
+          trip={activeShareTrip} 
+          onClose={() => setActiveShareTrip(null)} 
+        />
+      )}
     </div>
   )
 }
