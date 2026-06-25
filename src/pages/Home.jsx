@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import ItineraryCard from '../components/dashboard/ItineraryCard'
 import ShareModal from '../components/dashboard/ShareModal'
 import { useCurrentUser } from '../hooks/useCurrentUser'
+import { useAllItineraries } from '../hooks/useAllItineraries'
 
 const Home = () => {
   const [isDragging, setIsDragging] = useState(false)
@@ -11,6 +12,7 @@ const Home = () => {
   const fileInputRef = useRef(null)
   const location = useLocation()
   const { data: user, isLoading, error } = useCurrentUser()
+  const { data: itineraries, isLoading: isItinerariesLoading } = useAllItineraries()
 
   useEffect(() => {
     if (location.state?.triggerUpload) {
@@ -47,27 +49,6 @@ const Home = () => {
       setUploadedFiles(prev => [...prev, ...files.map(f => f.name)])
     }
   }
-
-  const itineraries = [
-    {
-      title: 'Amalfi Coast Escape',
-      description: 'Exploring Positano, Ravello, and the hidden grottoes of the coast with a curated local food tour.',
-      dates: 'Aug 12 - Aug 19',
-      location: 'Italy',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBpgeR1UhbOKWKrko4nT3xJukGI6fujwuZqnrQbiMDxpwVHaI7_vCQAFS_b0DtxRXN4Ne03P_EAFc_pi3rNMiHTeOJj0JitQwxLD7E-0_njabQKDIzmae7zYmp3BrbFDbZJM2lqAN2Jk8LT59Z8FSWdBPysidL9ggqxHpI8bigBngTvKfLTnbwWoPOcPgK3-up75wvSgml7mEaL_MXfuX36aVfZnHK3VFcpwOF99rLkiZDPRlNNnFY5ELdcRYAWGFkne4KCuDL79Y3c',
-      status: 'Upcoming',
-      actionText: 'View Itinerary',
-    },
-    {
-      title: 'Tokyo Transit',
-      description: 'A high-tech immersion through Akihabara, Tsukiji Market, and the tranquil shrines of Meiji-jingu.',
-      dates: 'June 04 - June 10',
-      location: 'Japan',
-      image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDoitR2eq1cKObxuhnIX635Nc1BChGuxzeCl4pxOFy5rluE1faCFJPx8hhQDw72Hnqb3uish273H_KkJfPcHiF5LRvpUbJyU7KqSv7uPGoDwN98grpjLM_EgXAT15wkxhY4VkCffRAbL8g3I-ZgA_6MZbzP08UfVE4kipLbpuxm0TKcHl00C8FOvIGYQfh_Uo1NCftT-PUqD3Yk80x47WLzrOY5WEOXmb4LwO0yMs2YleIeenj-tEd5nue35xs29UCxOQkobAHgs0ke',
-      status: 'Completed',
-      actionText: 'View Summary',
-    },
-  ]
 
   return (
     <div className="flex flex-col gap-12">
@@ -146,19 +127,41 @@ const Home = () => {
         </div>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-          {itineraries.map((itinerary, idx) => (
-            <ItineraryCard
-              key={idx}
-              title={itinerary.title}
-              description={itinerary.description}
-              dates={itinerary.dates}
-              location={itinerary.location}
-              image={itinerary.image}
-              status={itinerary.status}
-              actionText={itinerary.actionText}
-              onShare={setActiveShareTrip}
-            />
-          ))}
+          {isItinerariesLoading ? (
+            // Skeleton Loader Cards
+            [1, 2].map((i) => (
+              <div key={i} className="bg-white rounded-20px p-6 shadow-md border border-outline-variant/10 animate-pulse flex flex-col gap-4">
+                <div className="h-48 w-full bg-surface-variant/40 rounded-xl"></div>
+                <div className="h-6 w-1/3 bg-surface-variant/40 rounded"></div>
+                <div className="h-4 w-full bg-surface-variant/40 rounded"></div>
+                <div className="h-4 w-2/3 bg-surface-variant/40 rounded mt-auto"></div>
+              </div>
+            ))
+          ) : itineraries?.data?.itineraries && itineraries.data.itineraries.length > 0 ? (
+            // Real Itineraries from Backend
+            itineraries.data.itineraries.slice(0, 2).map((item) => (
+              <ItineraryCard
+                key={item._id}
+                title={item.to ? `${item.to} Journey` : 'Custom Getaway'}
+                description={item.itineraryData?.tripSummary || 'Detailed AI travel itinerary by TripGenie.'}
+                dates={item.date || 'Dates TBD'}
+                location={item.location || item.to || 'Explore'}
+                image={item.destinationImage || null} // Uses Pexels location image if available, else placeholder
+                status="Upcoming"
+                actionText="View Itinerary"
+                onShare={setActiveShareTrip}
+              />
+            ))
+          ) : (
+            // Empty State
+            <div className="col-span-full py-16 px-6 flex flex-col items-center justify-center text-center bg-white/50 backdrop-blur-md rounded-20px border border-outline-variant/30 shadow-sm">
+              <span className="material-symbols-outlined text-5xl text-primary/40 mb-3" style={{ fontVariationSettings: "'wght' 200" }}>map_search</span>
+              <h3 className="font-display-lg text-xl font-bold text-on-surface mb-2">No itineraries yet</h3>
+              <p className="text-on-surface-variant text-sm max-w-sm">
+                Upload your travel documents above, and TripGenie will parse them to build your custom itinerary.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

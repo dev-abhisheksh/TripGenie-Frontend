@@ -6,7 +6,7 @@
     
     const {data:user, isLoading, error} = useCurrentUser()
 
-    console.log("current user",user)
+    // console.log("current user",user)
 
     const navItems = [
       { name: 'Explore', icon: 'explore', path: '/' },

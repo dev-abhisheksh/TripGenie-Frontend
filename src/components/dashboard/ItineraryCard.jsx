@@ -14,12 +14,19 @@ const ItineraryCard = ({
   
   return (
     <div className="group bg-white rounded-20px overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 flex flex-col h-full">
-      <div className="h-56 relative overflow-hidden">
-        <img 
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-          alt={title} 
-          src={image} 
-        />
+      <div className="h-56 relative overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5 flex items-center justify-center border-b border-outline-variant/10">
+        {image ? (
+          <img 
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+            alt={title} 
+            src={image} 
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center text-primary/60 w-full h-full">
+            <span className="material-symbols-outlined text-5xl" style={{ fontVariationSettings: "'wght' 300" }}>map</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider mt-2 text-primary/50">TripGenie Preview</span>
+          </div>
+        )}
         <div className="absolute top-4 left-4">
           <span 
             className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
