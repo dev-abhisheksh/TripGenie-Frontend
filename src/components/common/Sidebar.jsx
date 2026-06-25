@@ -17,7 +17,7 @@ const Sidebar = () => {
   }
 
   return (
-    <aside className="fixed left-0 top-16 bottom-0 z-[40] flex flex-col h-[calc(100vh-64px)] w-72 bg-surface-container-low border-r border-outline-variant/30 px-2 py-4">
+    <aside className="fixed left-0 top-16 bottom-0 z-[40] hidden md:flex flex-col h-[calc(100vh-64px)] w-72 bg-surface-container-low border-r border-outline-variant/30 px-2 py-4">
       <div className="flex flex-col gap-1 mb-8 px-4 py-2">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-full overflow-hidden">

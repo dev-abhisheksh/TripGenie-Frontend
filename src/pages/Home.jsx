@@ -59,9 +59,9 @@ const Home = () => {
   return (
     <div className="flex flex-col gap-12">
       <section>
-        <div className="relative overflow-hidden rounded-20px bg-gradient-to-br from-primary-container to-secondary-container p-12 text-on-primary-container shadow-lg">
+        <div className="relative overflow-hidden rounded-20px bg-gradient-to-br from-primary-container to-secondary-container p-6 md:p-12 text-on-primary-container shadow-lg">
           <div className="relative z-10">
-            <h1 className="font-display-lg text-display-lg mb-4">Welcome back, Alex</h1>
+            <h1 className="font-display-lg text-display-lg-mobile md:text-display-lg mb-4">Welcome back, Alex</h1>
             <p className="font-body-lg text-body-lg opacity-90 max-w-xl">
               Where shall your curiosity lead you today? Upload your travel documents and let Genie weave your perfect itinerary.
             </p>
