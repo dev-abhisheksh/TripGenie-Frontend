@@ -50,6 +50,50 @@ const SharedItinerary = () => {
     }
   }
 
+  const topPlacesLookup = {
+    "positano": ["Spiaggia Grande", "Path of the Gods", "Church of Santa Maria Assunta", "Fiordo di Furore"],
+    "amalfi": ["Duomo di Amalfi", "Villa Cimbrone Gardens", "Ravello Center", "Emerald Grotto"],
+    "rome": ["Colosseum", "Trevi Fountain", "Vatican Museums", "Pantheon"],
+    "rio de janeiro": ["Christ the Redeemer", "Sugarloaf Mountain", "Copacabana Beach", "Ipanema"],
+    "miami": ["South Beach", "Vizcaya Museum & Gardens", "Wynwood Walls", "Little Havana"],
+    "paris": ["Eiffel Tower", "Louvre Museum", "Notre-Dame Cathedral", "Arc de Triomphe"],
+    "tokyo": ["Shibuya Crossing", "Senso-ji Temple", "Tokyo Skytree", "Meiji Jingu Shrine"],
+    "london": ["British Museum", "Tower Bridge", "London Eye", "Big Ben"],
+    "new york": ["Central Park", "Statue of Liberty", "Empire State Building", "Times Square"]
+  }
+
+  const getPlacesToVisit = (locName = '') => {
+    // 1. Prioritize AI-generated places from the backend
+    if (itinerary?.itineraryData?.placesToVisit && itinerary.itineraryData.placesToVisit.length > 0) {
+      return itinerary.itineraryData.placesToVisit
+    }
+
+    // 2. Fallback: Check local database lookup
+    const cleanLoc = locName.toLowerCase().trim()
+    for (const key of Object.keys(topPlacesLookup)) {
+      if (cleanLoc.includes(key)) {
+        return topPlacesLookup[key]
+      }
+    }
+
+    // 3. Fallback: Parse from timeline activities
+    const daysList = itinerary?.itineraryData?.days || []
+    if (daysList.length > 0) {
+      const parsedActivities = daysList
+        .flatMap(d => d.activities || [])
+        .map(act => parseActivity(act).text)
+        .map(txt => txt.replace(/^(check-in|dinner at|lunch at|hike|visit|explore|private transfer to|transfer to|go to)[:\s]*/i, ''))
+        .filter(txt => txt.length > 3 && txt.length < 40)
+        .slice(0, 4)
+
+      if (parsedActivities.length > 0) {
+        return parsedActivities
+      }
+    }
+
+    return ["Scenic Sights", "Local Markets", "Historic Landmarks", "Popular Eateries"]
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-surface p-6 md:p-12 animate-pulse space-y-8">
@@ -232,6 +276,24 @@ const SharedItinerary = () => {
                   src={`https://maps.google.com/maps?q=${encodeURIComponent(itinerary.location || itinerary.to || 'Explore')}&t=&z=12&ie=UTF8&iwloc=&output=embed`}
                 ></iframe>
               </div>
+            </div>
+
+            {/* Places to Visit Card */}
+            <div className="bg-white rounded-2xl p-5 border border-outline-variant/20 shadow-sm flex flex-col gap-4">
+              <h4 className="font-bold text-sm text-on-surface flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-lg">explore</span>
+                <span>Places to Visit</span>
+              </h4>
+              <ul className="space-y-3">
+                {getPlacesToVisit(itinerary.location || itinerary.to).map((place, idx) => (
+                  <li key={idx} className="flex items-center gap-2.5 text-xs text-on-surface-variant font-medium text-left">
+                    <span className="w-5 h-5 rounded bg-primary/5 flex items-center justify-center text-primary text-[11px] font-bold shrink-0">
+                      {idx + 1}
+                    </span>
+                    <span className="truncate">{place}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
             
           </aside>
