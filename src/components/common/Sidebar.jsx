@@ -1,14 +1,20 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { NavLink } from 'react-router-dom'
 
 const Sidebar = () => {
-  const [activeItem, setActiveItem] = useState('Explore')
-
   const navItems = [
-    { name: 'Explore', icon: 'explore' },
-    { name: 'My Trips', icon: 'map' },
-    { name: 'Saved', icon: 'bookmark' },
-    { name: 'AI Assistant', icon: 'auto_awesome' },
+    { name: 'Explore', icon: 'explore', path: '/' },
+    { name: 'My Trips', icon: 'map', path: '/trips' },
+    { name: 'Saved', icon: 'bookmark', path: '/saved' },
+    { name: 'AI Assistant', icon: 'auto_awesome', path: '/assistant' },
   ]
+
+  const getLinkClass = (isActive) => {
+    const base = 'rounded-full mx-2 my-1 px-4 py-3 flex items-center gap-4 transition-all duration-300 ease-in-out'
+    return isActive 
+      ? `${base} bg-secondary-container text-on-secondary-container` 
+      : `${base} text-on-surface-variant hover:bg-surface-variant/50`
+  }
 
   return (
     <aside className="fixed left-0 top-16 bottom-0 z-[40] flex flex-col h-[calc(100vh-64px)] w-72 bg-surface-container-low border-r border-outline-variant/30 px-2 py-4">
@@ -32,46 +38,43 @@ const Sidebar = () => {
       </div>
 
       <nav className="flex-1 flex flex-col gap-1 overflow-y-auto hide-scrollbar">
-        {navItems.map((item) => {
-          const isActive = activeItem === item.name
-          return (
-            <button
-              key={item.name}
-              onClick={() => setActiveItem(item.name)}
-              className={`rounded-full mx-2 my-1 px-4 py-3 flex items-center gap-4 transition-all duration-300 ease-in-out cursor-pointer text-left ${
-                isActive 
-                  ? 'bg-secondary-container text-on-secondary-container' 
-                  : 'text-on-surface-variant hover:bg-surface-variant/50'
-              }`}
-            >
-              <span 
-                className="material-symbols-outlined" 
-                style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
-              >
-                {item.icon}
-              </span>
-              <span className="font-medium">{item.name}</span>
-            </button>
-          )
-        })}
+        {navItems.map((item) => (
+          <NavLink
+            key={item.name}
+            to={item.path}
+            className={({ isActive }) => getLinkClass(isActive)}
+          >
+            {({ isActive }) => (
+              <>
+                <span 
+                  className="material-symbols-outlined" 
+                  style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+                >
+                  {item.icon}
+                </span>
+                <span className="font-medium">{item.name}</span>
+              </>
+            )}
+          </NavLink>
+        ))}
 
         <div className="mt-auto border-t border-outline-variant/20 pt-4">
-          <button
-            onClick={() => setActiveItem('Settings')}
-            className={`rounded-full mx-2 my-1 px-4 py-3 flex items-center gap-4 transition-all duration-300 ease-in-out cursor-pointer text-left w-[calc(100%-16px)] ${
-              activeItem === 'Settings' 
-                ? 'bg-secondary-container text-on-secondary-container' 
-                : 'text-on-surface-variant hover:bg-surface-variant/50'
-            }`}
+          <NavLink
+            to="/settings"
+            className={({ isActive }) => getLinkClass(isActive) + ' w-[calc(100%-16px)]'}
           >
-            <span 
-              className="material-symbols-outlined"
-              style={{ fontVariationSettings: activeItem === 'Settings' ? "'FILL' 1" : "'FILL' 0" }}
-            >
-              settings
-            </span>
-            <span className="font-medium">Settings</span>
-          </button>
+            {({ isActive }) => (
+              <>
+                <span 
+                  className="material-symbols-outlined"
+                  style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+                >
+                  settings
+                </span>
+                <span className="font-medium">Settings</span>
+              </>
+            )}
+          </NavLink>
         </div>
       </nav>
     </aside>
