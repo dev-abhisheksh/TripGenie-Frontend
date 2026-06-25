@@ -1,14 +1,33 @@
 import React, { useState } from 'react'
-import { Outlet, Link, useLocation } from 'react-router-dom'
+import { Outlet, Link, useLocation, Navigate } from 'react-router-dom'
 import Navbar from '../components/common/Navbar'
 import Sidebar from '../components/common/Sidebar'
 import StatsSidebar from '../components/common/StatsSidebar'
 import BottomBar from '../components/common/BottomBar'
+import { useCurrentUser } from '../hooks/useCurrentUser'
 
 const MainLayout = () => {
   const [isStatsVisible, setIsStatsVisible] = useState(true)
   const location = useLocation()
   const isDashboard = location.pathname === '/'
+  const { data: user, isLoading, error } = useCurrentUser()
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-surface flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <span className="material-symbols-outlined text-primary text-5xl animate-spin">
+            progress_activity
+          </span>
+          <p className="text-on-surface-variant text-sm font-semibold">Verifying session...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !user) {
+    return <Navigate to="/login" replace />
+  }
 
   return (
     <div className="min-h-screen bg-surface">

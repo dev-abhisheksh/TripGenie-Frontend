@@ -1,10 +1,24 @@
-  import React from 'react'
-  import { NavLink } from 'react-router-dom'
-  import { useCurrentUser } from '../../hooks/useCurrentUser'
+import React from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useCurrentUser } from '../../hooks/useCurrentUser'
+import { logoutUser } from '../../api/auth.api'
+import { useQueryClient } from '@tanstack/react-query'
 
   const Sidebar = () => {
-    
-    const {data:user, isLoading, error} = useCurrentUser()
+  const {data:user, isLoading, error} = useCurrentUser()
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser()
+    } catch (err) {
+      console.error("Logout failed", err)
+    } finally {
+      queryClient.clear()
+      navigate('/login', { replace: true })
+    }
+  }
 
     // console.log("current user",user)
 
@@ -82,13 +96,13 @@
                 </>
               )}
             </NavLink>
-            <NavLink
-              to="/login"
-              className="rounded-full mx-2 my-1 px-4 py-3 flex items-center gap-4 transition-all duration-300 ease-in-out text-on-surface-variant hover:bg-error/10 hover:text-error-container hover:text-error w-[calc(100%-16px)]"
+            <button
+              onClick={handleLogout}
+              className="rounded-full mx-2 my-1 px-4 py-3 flex items-center gap-4 transition-all duration-300 ease-in-out text-on-surface-variant hover:bg-error/10 hover:text-error-container hover:text-error w-[calc(100%-16px)] text-left cursor-pointer border-none outline-none"
             >
               <span className="material-symbols-outlined">logout</span>
               <span className="font-medium">Logout</span>
-            </NavLink>
+            </button>
           </div>
         </nav>
       </aside>
