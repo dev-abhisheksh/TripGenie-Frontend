@@ -15,6 +15,7 @@ import { useQueryClient } from '@tanstack/react-query'
     } catch (err) {
       console.error("Logout failed", err)
     } finally {
+      localStorage.removeItem('token')
       queryClient.clear()
       navigate('/login', { replace: true })
     }

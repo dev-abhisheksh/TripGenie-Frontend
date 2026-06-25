@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { registerUser } from '../api/auth.api'
+import { useQueryClient } from '@tanstack/react-query'
 
 const Register = () => {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,7 +20,7 @@ const Register = () => {
     if (error) setError('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     
     // Basic validation
@@ -32,13 +35,30 @@ const Register = () => {
     }
 
     setIsLoading(true)
+    setError('')
     
-    // Simulate successful registration without API calls
-    setTimeout(() => {
-      setIsLoading(false)
-      // Redirect to dashboard (home page)
+    try {
+      const generatedUsername = formData.email.split('@')[0] + Math.floor(Math.random() * 1000)
+      const res = await registerUser({
+        username: generatedUsername,
+        fullName: formData.name,
+        email: formData.email,
+        password: formData.password
+      })
+
+      if (res.data?.token) {
+        localStorage.setItem('token', res.data.token)
+      }
+
+      // Refresh current user query cache in the layout
+      queryClient.invalidateQueries({ queryKey: ['currentUser'] })
+
       navigate('/')
-    }, 1200)
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to register. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (

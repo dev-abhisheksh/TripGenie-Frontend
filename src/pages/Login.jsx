@@ -21,7 +21,10 @@ const Login = () => {
     setError('')
 
     try {
-      await loginUser(formData)
+      const res = await loginUser(formData)
+      if (res.data?.token) {
+        localStorage.setItem('token', res.data.token)
+      }
 
       // Refresh current user query cache in the layout
       queryClient.invalidateQueries({ queryKey: ['currentUser'] })
