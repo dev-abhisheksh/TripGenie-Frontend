@@ -16,10 +16,26 @@ const Home = () => {
   const [activeShareTrip, setActiveShareTrip] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
+  const [showLoading, setShowLoading] = useState(false)
+  const [isFadingOut, setIsFadingOut] = useState(false)
   const fileInputRef = useRef(null)
   const location = useLocation()
   const { data: user, isLoading, error } = useCurrentUser()
   const { data: itineraries, isLoading: isItinerariesLoading } = useAllItineraries()
+
+  useEffect(() => {
+    if (isUploading) {
+      setShowLoading(true)
+      setIsFadingOut(false)
+    } else if (showLoading) {
+      setIsFadingOut(true)
+      const timer = setTimeout(() => {
+        setShowLoading(false)
+        setIsFadingOut(false)
+      }, 700) // matches duration-700
+      return () => clearTimeout(timer)
+    }
+  }, [isUploading, showLoading])
 
   useEffect(() => {
     if (location.state?.triggerUpload) {
@@ -71,10 +87,6 @@ const Home = () => {
     if (e.target.files && e.target.files.length > 0) {
       handleUpload(e.target.files[0])
     }
-  }
-
-  if (isUploading) {
-    return <UploadLoading />
   }
 
   return (
@@ -219,6 +231,16 @@ const Home = () => {
           trip={activeShareTrip}
           onClose={() => setActiveShareTrip(null)}
         />
+      )}
+
+      {showLoading && (
+        <div 
+          className={`fixed inset-0 z-[100] bg-background px-margin-mobile md:px-margin-desktop pt-24 pb-32 overflow-y-auto hide-scrollbar transition-opacity duration-700 ease-in-out ${
+            isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+        >
+          <UploadLoading />
+        </div>
       )}
     </div>
   )

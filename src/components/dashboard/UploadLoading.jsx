@@ -25,7 +25,14 @@ const UploadLoading = () => {
       }
     }, 1800 + Math.random() * 1000)
 
-    return () => clearInterval(interval)
+    // Lock body scrollbars
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      clearInterval(interval)
+      // Unlock body scrollbars
+      document.body.style.overflow = 'unset'
+    }
   }, [])
 
   return (
