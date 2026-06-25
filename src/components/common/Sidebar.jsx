@@ -1,0 +1,81 @@
+import React, { useState } from 'react'
+
+const Sidebar = () => {
+  const [activeItem, setActiveItem] = useState('Explore')
+
+  const navItems = [
+    { name: 'Explore', icon: 'explore' },
+    { name: 'My Trips', icon: 'map' },
+    { name: 'Saved', icon: 'bookmark' },
+    { name: 'AI Assistant', icon: 'auto_awesome' },
+  ]
+
+  return (
+    <aside className="fixed left-0 top-16 bottom-0 z-[40] flex flex-col h-[calc(100vh-64px)] w-72 bg-surface-container-low border-r border-outline-variant/30 px-2 py-4">
+      <div className="flex flex-col gap-1 mb-8 px-4 py-2">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-full overflow-hidden">
+            <img 
+              className="w-full h-full object-cover" 
+              alt="Alex Taylor" 
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDplyTyHNc_A_tGLpvN94vNUr3pul9RGo2cGJqmMenkRpRQvD4hVKgRtsH_CljNer-_6bYRGRrOlewNdVw463pjW7nXD6e6ykL3GWAPVkOgajPoabDzvpd_IAJVkFzYeolNILFpFDfMf_RRgKOv719eCfV6JEYFzfRERrKEhPncw5ggoxPM4qnfo_-5ojGk8fo7ocBxVKuNQnNtg0erz55JbfKbjj-eZivCk1OCofxuYxKAANoNA18i5d4j_9YTUERuJUTyh8KITQIh" 
+            />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-headline-md text-base font-bold text-primary">Alex Taylor</span>
+            <span className="text-xs text-on-surface-variant">Global Explorer</span>
+          </div>
+        </div>
+        <div className="mt-2 inline-flex items-center px-2 py-1 bg-primary/10 rounded-full w-fit">
+          <span className="text-[10px] font-bold text-primary uppercase tracking-wider">Premium Member</span>
+        </div>
+      </div>
+
+      <nav className="flex-1 flex flex-col gap-1 overflow-y-auto hide-scrollbar">
+        {navItems.map((item) => {
+          const isActive = activeItem === item.name
+          return (
+            <button
+              key={item.name}
+              onClick={() => setActiveItem(item.name)}
+              className={`rounded-full mx-2 my-1 px-4 py-3 flex items-center gap-4 transition-all duration-300 ease-in-out cursor-pointer text-left ${
+                isActive 
+                  ? 'bg-secondary-container text-on-secondary-container' 
+                  : 'text-on-surface-variant hover:bg-surface-variant/50'
+              }`}
+            >
+              <span 
+                className="material-symbols-outlined" 
+                style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
+              >
+                {item.icon}
+              </span>
+              <span className="font-medium">{item.name}</span>
+            </button>
+          )
+        })}
+
+        <div className="mt-auto border-t border-outline-variant/20 pt-4">
+          <button
+            onClick={() => setActiveItem('Settings')}
+            className={`rounded-full mx-2 my-1 px-4 py-3 flex items-center gap-4 transition-all duration-300 ease-in-out cursor-pointer text-left w-[calc(100%-16px)] ${
+              activeItem === 'Settings' 
+                ? 'bg-secondary-container text-on-secondary-container' 
+                : 'text-on-surface-variant hover:bg-surface-variant/50'
+            }`}
+          >
+            <span 
+              className="material-symbols-outlined"
+              style={{ fontVariationSettings: activeItem === 'Settings' ? "'FILL' 1" : "'FILL' 0" }}
+            >
+              settings
+            </span>
+            <span className="font-medium">Settings</span>
+          </button>
+        </div>
+      </nav>
+    </aside>
+  )
+}
+
+export default Sidebar
