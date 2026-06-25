@@ -21,7 +21,6 @@ const Login = () => {
     setError('')
 
     try {
-      // ---> THIS IS THE API CALL <---
       await loginUser(formData)
 
       // Refresh current user query cache in the layout

@@ -3,10 +3,6 @@ import { useCurrentUser } from '../../hooks/useCurrentUser'
 
 const Navbar = () => {
 
-  const {data:user, isLoading, error} = useCurrentUser()
-
-  console.log(user)
-
   return (
     <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop h-16 bg-surface/70 backdrop-blur-lg border-b border-white/20 shadow-sm">
       <div className="flex items-center gap-4">
