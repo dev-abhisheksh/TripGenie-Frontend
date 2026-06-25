@@ -8,17 +8,17 @@ import { useAllItineraries } from '../hooks/useAllItineraries'
 import { useQueryClient } from '@tanstack/react-query'
 import { uploadItinerary } from '../api/itinerary.api'
 import UploadLoading from '../components/dashboard/UploadLoading'
+import UploadModal from '../components/dashboard/UploadModal'
 
 const Home = () => {
   const queryClient = useQueryClient()
-  const [isDragging, setIsDragging] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState([])
   const [activeShareTrip, setActiveShareTrip] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState('')
   const [showLoading, setShowLoading] = useState(false)
   const [isFadingOut, setIsFadingOut] = useState(false)
-  const fileInputRef = useRef(null)
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
   const location = useLocation()
   const { data: user, isLoading, error } = useCurrentUser()
   const { data: itineraries, isLoading: isItinerariesLoading } = useAllItineraries()
@@ -39,19 +39,10 @@ const Home = () => {
 
   useEffect(() => {
     if (location.state?.triggerUpload) {
-      fileInputRef.current?.click()
+      setIsUploadModalOpen(true)
       window.history.replaceState({}, document.title)
     }
   }, [location])
-
-  const handleDragOver = (e) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }
-
-  const handleDragLeave = () => {
-    setIsDragging(false)
-  }
 
   const handleUpload = async (file) => {
     setIsUploading(true)
@@ -71,22 +62,12 @@ const Home = () => {
     }
   }
 
-  const handleDrop = (e) => {
-    e.preventDefault()
-    setIsDragging(false)
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleUpload(e.dataTransfer.files[0])
-    }
-  }
-
-  const handleFileBrowse = () => {
-    fileInputRef.current.click()
-  }
-
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      handleUpload(e.target.files[0])
-    }
+  if (showLoading) {
+    return (
+      <div className={`transition-opacity duration-700 ease-in-out ${isFadingOut ? 'opacity-0' : 'opacity-100'}`}>
+        <UploadLoading />
+      </div>
+    )
   }
 
   return (
@@ -99,73 +80,34 @@ const Home = () => {
               Where shall your curiosity lead you today? Upload your travel documents and let Genie weave your perfect itinerary.
             </p>
 
-            <div className="mt-6 group">
-              <div
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                className={`border border-dashed border-on-primary-container/30 bg-white/10 backdrop-blur-md rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 transition-all duration-300 ${isDragging
-                    ? 'bg-white/30 border-on-primary-container/60 scale-[1.01]'
-                    : 'hover:bg-white/20 hover:border-on-primary-container/50'
-                  }`}
-              >
-                {isUploading ? (
-                  <div className="flex items-center gap-3 py-2 w-full justify-center">
-                    <svg className="animate-spin h-5 w-5 text-on-primary-container" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span className="font-semibold text-sm">Genie is parsing your document...</span>
-                  </div>
-                ) : (
-                  <>
-                    <div className="flex items-center gap-3 text-center sm:text-left">
-                      <span className="material-symbols-outlined text-2xl text-on-primary-container">cloud_upload</span>
-                      <div>
-                        <p className="font-semibold text-sm">Drag &amp; drop travel documents here</p>
-                        <p className="text-xs opacity-75">PDF, JPEG, or PNG (Max 10MB)</p>
-                      </div>
-                    </div>
+            <button
+              onClick={() => setIsUploadModalOpen(true)}
+              className="mt-6 bg-white text-primary px-6 py-3.5 rounded-xl font-bold text-sm shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-2 border-none outline-none"
+            >
+              <span className="material-symbols-outlined font-bold">add_circle</span>
+              <span>Weave New Itinerary</span>
+            </button>
 
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      onChange={handleFileChange}
-                      className="hidden"
-                      accept=".pdf,image/*"
-                    />
-
-                    <button
-                      onClick={handleFileBrowse}
-                      className="bg-white text-primary px-5 py-2 rounded-lg font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
-                    >
-                      Browse Files
-                    </button>
-                  </>
-                )}
+            {uploadError && (
+              <div className="mt-4 bg-red-500/20 rounded-xl p-3 border border-red-500/30 text-xs text-red-100 flex items-center gap-2 max-w-xl">
+                <span className="material-symbols-outlined text-sm shrink-0">error</span>
+                <span>{uploadError}</span>
               </div>
+            )}
 
-              {uploadError && (
-                <div className="mt-3 bg-red-500/10 rounded-xl p-3 border border-red-500/30 text-xs text-red-100 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm shrink-0">error</span>
-                  <span>{uploadError}</span>
-                </div>
-              )}
-
-              {uploadedFiles.length > 0 && (
-                <div className="mt-3 bg-white/10 rounded-xl p-3 border border-white/20">
-                  <p className="text-[10px] font-bold uppercase tracking-wider mb-2 text-primary-container">Uploaded Documents:</p>
-                  <ul className="text-xs space-y-1 text-on-primary-container">
-                    {uploadedFiles.map((fileName, idx) => (
-                      <li key={idx} className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-xs">description</span>
-                        <span className="truncate">{fileName}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+            {uploadedFiles.length > 0 && (
+              <div className="mt-4 bg-white/10 rounded-xl p-3 border border-white/20 max-w-sm">
+                <p className="text-[10px] font-bold uppercase tracking-wider mb-2 text-primary-container">Uploaded Documents:</p>
+                <ul className="text-xs space-y-1 text-on-primary-container">
+                  {uploadedFiles.map((fileName, idx) => (
+                    <li key={idx} className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-xs">description</span>
+                      <span className="truncate">{fileName}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -233,15 +175,11 @@ const Home = () => {
         />
       )}
 
-      {showLoading && (
-        <div 
-          className={`fixed inset-0 z-[100] bg-background px-margin-mobile md:px-margin-desktop pt-24 pb-32 overflow-y-auto hide-scrollbar transition-opacity duration-700 ease-in-out ${
-            isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
-          }`}
-        >
-          <UploadLoading />
-        </div>
-      )}
+      <UploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        onUpload={handleUpload}
+      />
     </div>
   )
 }
