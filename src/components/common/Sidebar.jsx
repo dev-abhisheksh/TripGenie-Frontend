@@ -60,7 +60,7 @@ const Sidebar = () => {
 
         <div className="mt-auto border-t border-outline-variant/20 pt-4">
           <NavLink
-            to="/settings"
+            to="/profile"
             className={({ isActive }) => getLinkClass(isActive) + ' w-[calc(100%-16px)]'}
           >
             {({ isActive }) => (
@@ -69,9 +69,9 @@ const Sidebar = () => {
                   className="material-symbols-outlined"
                   style={{ fontVariationSettings: isActive ? "'FILL' 1" : "'FILL' 0" }}
                 >
-                  settings
+                  person
                 </span>
-                <span className="font-medium">Settings</span>
+                <span className="font-medium">Profile</span>
               </>
             )}
           </NavLink>

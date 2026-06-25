@@ -4,7 +4,7 @@ import Home from './pages/Home'
 import MyTrips from './pages/MyTrips'
 import Saved from './pages/Saved'
 import AIAssistant from './pages/AIAssistant'
-import Settings from './pages/Settings'
+import Profile from './pages/Profile'
 
 const router = createBrowserRouter([
   {
@@ -15,7 +15,7 @@ const router = createBrowserRouter([
       { path: 'trips', element: <MyTrips /> },
       { path: 'saved', element: <Saved /> },
       { path: 'assistant', element: <AIAssistant /> },
-      { path: 'settings', element: <Settings /> },
+      { path: 'profile', element: <Profile /> },
     ]
   }
 ])

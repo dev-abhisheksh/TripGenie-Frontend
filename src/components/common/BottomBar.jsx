@@ -7,7 +7,7 @@ const BottomBar = () => {
     { name: 'My Trips', icon: 'map', path: '/trips' },
     { name: 'Saved', icon: 'bookmark', path: '/saved' },
     { name: 'AI Assistant', icon: 'auto_awesome', path: '/assistant' },
-    { name: 'Settings', icon: 'settings', path: '/settings' },
+    { name: 'Profile', icon: 'person', path: '/profile' },
   ]
 
   const getLinkClass = (isActive) => {
