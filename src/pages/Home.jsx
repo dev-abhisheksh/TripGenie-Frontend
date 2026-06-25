@@ -144,6 +144,7 @@ const Home = () => {
             itineraries.data.itineraries.slice(0, 2).map((item) => (
               <ItineraryCard
                 key={item._id}
+                id={item._id}
                 title={item.to ? `${item.to} Journey` : 'Custom Getaway'}
                 description={item.itineraryData?.tripSummary || 'Detailed AI travel itinerary by TripGenie.'}
                 dates={item.date || 'Dates TBD'}

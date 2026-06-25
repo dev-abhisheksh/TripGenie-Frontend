@@ -1,6 +1,8 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const ItineraryCard = ({ 
+  id,
   title, 
   description, 
   dates, 
@@ -65,9 +67,12 @@ const ItineraryCard = ({
           </div>
         </div>
         
-        <button className="mt-auto w-full py-3 bg-surface-container-high text-primary font-bold rounded-xl hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer">
+        <Link 
+          to={`/trips/${id}`}
+          className="mt-auto w-full py-3 bg-surface-container-high text-primary font-bold rounded-xl hover:bg-primary hover:text-white transition-all duration-300 cursor-pointer text-center block"
+        >
           {actionText}
-        </button>
+        </Link>
       </div>
     </div>
   )

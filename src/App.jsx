@@ -7,6 +7,8 @@ import AIAssistant from './pages/AIAssistant'
 import Profile from './pages/Profile'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import ItineraryDetails from './pages/ItineraryDetails'
+import SharedItinerary from './pages/SharedItinerary'
 
 const router = createBrowserRouter([
   {
@@ -18,11 +20,16 @@ const router = createBrowserRouter([
     element: <Register />
   },
   {
+    path: '/share/:shareId',
+    element: <SharedItinerary />
+  },
+  {
     path: '/',
     element: <MainLayout />,
     children: [
       { index: true, element: <Home /> },
       { path: 'trips', element: <MyTrips /> },
+      { path: 'trips/:id', element: <ItineraryDetails /> },
       { path: 'saved', element: <Saved /> },
       { path: 'assistant', element: <AIAssistant /> },
       { path: 'profile', element: <Profile /> },

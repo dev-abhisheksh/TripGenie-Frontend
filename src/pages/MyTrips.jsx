@@ -64,6 +64,7 @@ const MyTrips = () => {
           filteredItineraries.map((item) => (
             <ItineraryCard
               key={item._id}
+              id={item._id}
               title={item.to ? `${item.to} Journey` : 'Custom Getaway'}
               description={item.itineraryData?.tripSummary || 'Detailed AI travel itinerary by TripGenie.'}
               dates={item.date || 'Dates TBD'}
