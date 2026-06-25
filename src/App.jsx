@@ -2,8 +2,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import MainLayout from './layout/MainLayout'
 import Home from './pages/Home'
 import MyTrips from './pages/MyTrips'
-import Saved from './pages/Saved'
-import AIAssistant from './pages/AIAssistant'
 import Profile from './pages/Profile'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -30,8 +28,6 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'trips', element: <MyTrips /> },
       { path: 'trips/:id', element: <ItineraryDetails /> },
-      { path: 'saved', element: <Saved /> },
-      { path: 'assistant', element: <AIAssistant /> },
       { path: 'profile', element: <Profile /> },
     ]
   }

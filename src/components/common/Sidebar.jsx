@@ -26,8 +26,6 @@ import { useQueryClient } from '@tanstack/react-query'
     const navItems = [
       { name: 'Explore', icon: 'explore', path: '/' },
       { name: 'My Trips', icon: 'map', path: '/trips' },
-      { name: 'Saved', icon: 'bookmark', path: '/saved' },
-      { name: 'AI Assistant', icon: 'auto_awesome', path: '/assistant' },
     ]
 
     const getLinkClass = (isActive) => {

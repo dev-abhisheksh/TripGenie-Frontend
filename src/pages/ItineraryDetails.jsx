@@ -219,6 +219,25 @@ const ItineraryDetails = () => {
                 "Based on your travel to {itinerary.location || 'this destination'}, local cafes and walking routes are highly rated. Wear comfortable shoes and keep offline maps handy."
               </p>
             </div>
+
+            {/* Location Map Card */}
+            <div className="bg-white rounded-2xl p-4 border border-outline-variant/20 shadow-sm flex flex-col gap-3">
+              <h4 className="font-bold text-sm text-on-surface flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-lg">map</span>
+                <span>Explore Map</span>
+              </h4>
+              <div className="w-full aspect-[4/3] rounded-xl overflow-hidden border border-outline-variant/10">
+                <iframe
+                  title="Destination Map"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(itinerary.location || itinerary.to || 'Explore')}&t=&z=12&ie=UTF8&iwloc=&output=embed`}
+                ></iframe>
+              </div>
+            </div>
             
           </aside>
 

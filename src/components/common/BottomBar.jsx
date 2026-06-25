@@ -5,8 +5,6 @@ const BottomBar = () => {
   const navItems = [
     { name: 'Explore', icon: 'explore', path: '/' },
     { name: 'My Trips', icon: 'map', path: '/trips' },
-    { name: 'Saved', icon: 'bookmark', path: '/saved' },
-    { name: 'AI Assistant', icon: 'auto_awesome', path: '/assistant' },
     { name: 'Profile', icon: 'person', path: '/profile' },
   ]
 
