@@ -8,6 +8,7 @@ const ItineraryCard = ({
   image, 
   status, 
   actionText,
+  shareId,
   onShare
 }) => {
   const isUpcoming = status?.toLowerCase() === 'upcoming'
@@ -44,7 +45,7 @@ const ItineraryCard = ({
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-headline-md text-xl text-on-surface">{title}</h3>
           <button 
-            onClick={() => onShare?.({ title, location })}
+            onClick={() => onShare?.({ title, location, shareId })}
             className="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors p-1 rounded-full hover:bg-surface-variant/20 border-none outline-none"
           >
             share

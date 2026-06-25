@@ -71,6 +71,7 @@ const MyTrips = () => {
               image={item.destinationImage || null}
               status="Upcoming"
               actionText="View Itinerary"
+              shareId={item.shareId}
               onShare={setActiveShareTrip}
             />
           ))

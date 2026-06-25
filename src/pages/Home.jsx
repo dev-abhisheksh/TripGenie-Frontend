@@ -5,10 +5,16 @@ import ShareModal from '../components/dashboard/ShareModal'
 import { useCurrentUser } from '../hooks/useCurrentUser'
 import { useAllItineraries } from '../hooks/useAllItineraries'
 
+import { useQueryClient } from '@tanstack/react-query'
+import { uploadItinerary } from '../api/itinerary.api'
+
 const Home = () => {
+  const queryClient = useQueryClient()
   const [isDragging, setIsDragging] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState([])
   const [activeShareTrip, setActiveShareTrip] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
   const fileInputRef = useRef(null)
   const location = useLocation()
   const { data: user, isLoading, error } = useCurrentUser()
@@ -30,12 +36,29 @@ const Home = () => {
     setIsDragging(false)
   }
 
+  const handleUpload = async (file) => {
+    setIsUploading(true)
+    setUploadError('')
+    const formData = new FormData()
+    formData.append('document', file)
+
+    try {
+      await uploadItinerary(formData)
+      queryClient.invalidateQueries({ queryKey: ['allItineraries'] })
+      setUploadedFiles(prev => [...prev, file.name])
+    } catch (err) {
+      console.error(err)
+      setUploadError(err.response?.data?.message || `Failed to parse ${file.name}. Ensure it is a valid travel ticket or PDF.`)
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
   const handleDrop = (e) => {
     e.preventDefault()
     setIsDragging(false)
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const files = Array.from(e.dataTransfer.files)
-      setUploadedFiles(prev => [...prev, ...files.map(f => f.name)])
+      handleUpload(e.dataTransfer.files[0])
     }
   }
 
@@ -45,8 +68,7 @@ const Home = () => {
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
-      const files = Array.from(e.target.files)
-      setUploadedFiles(prev => [...prev, ...files.map(f => f.name)])
+      handleUpload(e.target.files[0])
     }
   }
 
@@ -70,29 +92,48 @@ const Home = () => {
                     : 'hover:bg-white/20 hover:border-on-primary-container/50'
                   }`}
               >
-                <div className="flex items-center gap-3 text-center sm:text-left">
-                  <span className="material-symbols-outlined text-2xl text-on-primary-container">cloud_upload</span>
-                  <div>
-                    <p className="font-semibold text-sm">Drag &amp; drop travel documents here</p>
-                    <p className="text-xs opacity-75">PDF, JPEG, or PNG (Max 10MB)</p>
+                {isUploading ? (
+                  <div className="flex items-center gap-3 py-2 w-full justify-center">
+                    <svg className="animate-spin h-5 w-5 text-on-primary-container" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span className="font-semibold text-sm">Genie is parsing your document...</span>
                   </div>
-                </div>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-3 text-center sm:text-left">
+                      <span className="material-symbols-outlined text-2xl text-on-primary-container">cloud_upload</span>
+                      <div>
+                        <p className="font-semibold text-sm">Drag &amp; drop travel documents here</p>
+                        <p className="text-xs opacity-75">PDF, JPEG, or PNG (Max 10MB)</p>
+                      </div>
+                    </div>
 
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  className="hidden"
-                  multiple
-                />
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="hidden"
+                      accept=".pdf,image/*"
+                    />
 
-                <button
-                  onClick={handleFileBrowse}
-                  className="bg-white text-primary px-5 py-2 rounded-lg font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
-                >
-                  Browse Files
-                </button>
+                    <button
+                      onClick={handleFileBrowse}
+                      className="bg-white text-primary px-5 py-2 rounded-lg font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                    >
+                      Browse Files
+                    </button>
+                  </>
+                )}
               </div>
+
+              {uploadError && (
+                <div className="mt-3 bg-red-500/10 rounded-xl p-3 border border-red-500/30 text-xs text-red-100 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-sm shrink-0">error</span>
+                  <span>{uploadError}</span>
+                </div>
+              )}
 
               {uploadedFiles.length > 0 && (
                 <div className="mt-3 bg-white/10 rounded-xl p-3 border border-white/20">
@@ -151,6 +192,7 @@ const Home = () => {
                 image={item.destinationImage || null} // Uses Pexels location image if available, else placeholder
                 status="Upcoming"
                 actionText="View Itinerary"
+                shareId={item.shareId}
                 onShare={setActiveShareTrip}
               />
             ))

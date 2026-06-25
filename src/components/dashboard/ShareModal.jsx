@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 const ShareModal = ({ trip, onClose }) => {
   const [copied, setCopied] = useState(false)
-  const shareUrl = `https://tripgenie.ai/share/${trip.title.toLowerCase().replace(/ /g, '-')}`
+  const shareUrl = `${window.location.origin}/share/${trip.shareId || ''}`
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shareUrl)
