@@ -1,6 +1,6 @@
 import React from 'react'
 
-const StatsSidebar = () => {
+const StatsSidebar = ({ isVisible }) => {
   const stats = [
     {
       label: 'Total Trips',
@@ -30,7 +30,7 @@ const StatsSidebar = () => {
   ]
 
   return (
-    <aside className="fixed right-0 top-16 bottom-0 w-80 bg-white border-l border-outline-variant/30 p-6 z-[30] overflow-y-auto hide-scrollbar">
+    <aside className={`fixed right-0 top-16 bottom-0 w-80 bg-white border-l border-outline-variant/30 p-6 z-[30] overflow-y-auto hide-scrollbar transition-all duration-300 ease-in-out ${isVisible ? 'translate-x-0' : 'translate-x-full'}`}>
       <h2 className="font-headline-md text-lg mb-6">Your Stats</h2>
       
       <div className="grid grid-cols-1 gap-4 mb-8">
