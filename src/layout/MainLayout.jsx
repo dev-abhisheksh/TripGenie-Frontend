@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, Link, useLocation } from 'react-router-dom'
 import Navbar from '../components/common/Navbar'
 import Sidebar from '../components/common/Sidebar'
 import StatsSidebar from '../components/common/StatsSidebar'
@@ -7,6 +7,8 @@ import BottomBar from '../components/common/BottomBar'
 
 const MainLayout = () => {
   const [isStatsVisible, setIsStatsVisible] = useState(true)
+  const location = useLocation()
+  const isDashboard = location.pathname === '/'
 
   return (
     <div className="min-h-screen bg-surface">
@@ -33,21 +35,25 @@ const MainLayout = () => {
         <StatsSidebar isVisible={isStatsVisible} />
       </div>
 
-      {/* Mobile Bottom Bar Navigation */}
       <BottomBar />
 
-      {/* Floating Action Button (FAB) - Position changes dynamically on mobile vs. desktop */}
-      <button className={`fixed z-50 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 group overflow-hidden cursor-pointer border-none outline-none bottom-20 md:bottom-8 right-6 md:right-8 lg:right-auto ${
-        isStatsVisible ? 'lg:right-[22rem]' : 'lg:right-8'
-      }`}>
-        <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        <span 
-          className="material-symbols-outlined text-2xl" 
-          style={{ fontVariationSettings: "'wght' 600" }}
+      {!isDashboard && (
+        <Link 
+          to="/" 
+          state={{ triggerUpload: true }}
+          className={`fixed z-50 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 group overflow-hidden cursor-pointer border-none outline-none bottom-20 md:bottom-8 right-6 md:right-8 ${
+            isStatsVisible ? 'lg:right-[22rem]' : 'lg:right-8'
+          }`}
         >
-          add
-        </span>
-      </button>
+          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <span 
+            className="material-symbols-outlined text-2xl" 
+            style={{ fontVariationSettings: "'wght' 600" }}
+          >
+            add
+          </span>
+        </Link>
+      )}
     </div>
   )
 }

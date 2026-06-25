@@ -1,10 +1,19 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import ItineraryCard from '../components/dashboard/ItineraryCard'
 
 const Home = () => {
   const [isDragging, setIsDragging] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState([])
   const fileInputRef = useRef(null)
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.state?.triggerUpload) {
+      fileInputRef.current?.click()
+      window.history.replaceState({}, document.title)
+    }
+  }, [location])
 
   const handleDragOver = (e) => {
     e.preventDefault()
@@ -66,20 +75,24 @@ const Home = () => {
               Where shall your curiosity lead you today? Upload your travel documents and let Genie weave your perfect itinerary.
             </p>
 
-            <div className="mt-8 group">
+            <div className="mt-6 group">
               <div 
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`border-2 border-dashed border-on-primary-container/30 bg-white/10 backdrop-blur-md rounded-20px p-8 flex flex-col items-center justify-center transition-all duration-300 ${
+                className={`border border-dashed border-on-primary-container/30 bg-white/10 backdrop-blur-md rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 transition-all duration-300 ${
                   isDragging 
-                    ? 'bg-white/30 border-on-primary-container/60 scale-[1.02]' 
+                    ? 'bg-white/30 border-on-primary-container/60 scale-[1.01]' 
                     : 'hover:bg-white/20 hover:border-on-primary-container/50'
                 }`}
               >
-                <span className="material-symbols-outlined text-5xl mb-4">cloud_upload</span>
-                <p className="font-headline-md text-lg mb-2">Drag &amp; drop travel documents here</p>
-                <p className="text-sm opacity-70 mb-4">PDF, JPEG, or PNG (Max 10MB)</p>
+                <div className="flex items-center gap-3 text-center sm:text-left">
+                  <span className="material-symbols-outlined text-2xl text-on-primary-container">cloud_upload</span>
+                  <div>
+                    <p className="font-semibold text-sm">Drag &amp; drop travel documents here</p>
+                    <p className="text-xs opacity-75">PDF, JPEG, or PNG (Max 10MB)</p>
+                  </div>
+                </div>
                 
                 <input 
                   type="file" 
@@ -91,25 +104,25 @@ const Home = () => {
                 
                 <button 
                   onClick={handleFileBrowse}
-                  className="bg-white text-primary px-8 py-3 rounded-full font-bold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  className="bg-white text-primary px-5 py-2 rounded-lg font-bold text-xs shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
                 >
                   Browse Files
                 </button>
-
-                {uploadedFiles.length > 0 && (
-                  <div className="mt-6 w-full max-w-md bg-white/10 rounded-xl p-3 border border-white/20">
-                    <p className="text-xs font-semibold uppercase tracking-wider mb-2 text-primary-container">Uploaded Documents:</p>
-                    <ul className="text-sm space-y-1 text-on-primary-container">
-                      {uploadedFiles.map((fileName, idx) => (
-                        <li key={idx} className="flex items-center gap-2">
-                          <span className="material-symbols-outlined text-sm">description</span>
-                          <span className="truncate">{fileName}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
               </div>
+
+              {uploadedFiles.length > 0 && (
+                <div className="mt-3 bg-white/10 rounded-xl p-3 border border-white/20">
+                  <p className="text-[10px] font-bold uppercase tracking-wider mb-2 text-primary-container">Uploaded Documents:</p>
+                  <ul className="text-xs space-y-1 text-on-primary-container">
+                    {uploadedFiles.map((fileName, idx) => (
+                      <li key={idx} className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-xs">description</span>
+                        <span className="truncate">{fileName}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>
