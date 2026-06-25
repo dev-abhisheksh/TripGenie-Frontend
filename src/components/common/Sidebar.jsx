@@ -58,7 +58,7 @@ const Sidebar = () => {
           </NavLink>
         ))}
 
-        <div className="mt-auto border-t border-outline-variant/20 pt-4">
+        <div className="mt-auto border-t border-outline-variant/20 pt-2 flex flex-col gap-1">
           <NavLink
             to="/profile"
             className={({ isActive }) => getLinkClass(isActive) + ' w-[calc(100%-16px)]'}
@@ -74,6 +74,13 @@ const Sidebar = () => {
                 <span className="font-medium">Profile</span>
               </>
             )}
+          </NavLink>
+          <NavLink
+            to="/login"
+            className="rounded-full mx-2 my-1 px-4 py-3 flex items-center gap-4 transition-all duration-300 ease-in-out text-on-surface-variant hover:bg-error/10 hover:text-error-container hover:text-error w-[calc(100%-16px)]"
+          >
+            <span className="material-symbols-outlined">logout</span>
+            <span className="font-medium">Logout</span>
           </NavLink>
         </div>
       </nav>

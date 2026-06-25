@@ -5,8 +5,18 @@ import MyTrips from './pages/MyTrips'
 import Saved from './pages/Saved'
 import AIAssistant from './pages/AIAssistant'
 import Profile from './pages/Profile'
+import Login from './pages/Login'
+import Register from './pages/Register'
 
 const router = createBrowserRouter([
+  {
+    path: '/login',
+    element: <Login />
+  },
+  {
+    path: '/register',
+    element: <Register />
+  },
   {
     path: '/',
     element: <MainLayout />,
