@@ -7,6 +7,7 @@ import { useAllItineraries } from '../hooks/useAllItineraries'
 
 import { useQueryClient } from '@tanstack/react-query'
 import { uploadItinerary } from '../api/itinerary.api'
+import UploadLoading from '../components/dashboard/UploadLoading'
 
 const Home = () => {
   const queryClient = useQueryClient()
@@ -70,6 +71,10 @@ const Home = () => {
     if (e.target.files && e.target.files.length > 0) {
       handleUpload(e.target.files[0])
     }
+  }
+
+  if (isUploading) {
+    return <UploadLoading />
   }
 
   return (
